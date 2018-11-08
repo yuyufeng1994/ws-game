@@ -98,18 +98,18 @@
 
     //如果浏览器支持WebSocket
     if (window.WebSocket) {
-        websocket = new WebSocket("ws://10.26.180.84:21775/ws");  //获得WebSocket对象
+        websocket = new WebSocket("ws://127.0.0.1:21775/ws");  //获得WebSocket对象
 
         //当有消息过来的时候触发
         websocket.onmessage = function (event) {
             var data = JSON.parse(event.data);
+            ctx.clearRect(0, 0, width, height);
             for (key in data) {
                 console.log(data[key])
-                ctx.clearRect(data[key].x, data[key].y, width, height);
                 ctx.beginPath();
                 ctx.fillStyle = data[key].color;
                 ctx.strokeStyle = data[key].color;
-                ctx.rect(x, y, 50, 50);
+                ctx.rect(data[key].x, data[key].y, 50, 50);
                 ctx.stroke();
                 ctx.closePath();
                 ctx.fill();

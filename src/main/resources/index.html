@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyGame</title>
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        #myCanvas {
+            margin: 0 auto;
+            border: black 1px solid;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div>
+        <!--<h3>Game游戏</h3>-->
+        <div>
+            <canvas id="myCanvas" width="600px" height="600px"></canvas>
+        </div>
+        <div>
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default" onclick="doMove.left()">←</button>
+                <button type="button" class="btn btn-default" onclick="doMove.right()">→</button>
+                <button type="button" class="btn btn-default" onclick="doMove.up()">↑</button>
+                <button type="button" class="btn btn-default" onclick="doMove.down()">↓</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var width = 600;
+    var height = 600;
+    var speed = 10;
+    var x = 0, y = 0;
+    var ctx = document.getElementById("myCanvas").getContext("2d");
+    document.body.onkeydown = function (evt) {
+        var e = evt || event;
+        switch (e.keyCode) {
+            case 37:
+                doMove.left();
+                break;
+            case 39:
+                doMove.right();
+                break;
+            case 38:
+                doMove.up();
+                break;
+            case 40:
+                doMove.down();
+                break;
+        }
+    }
+
+
+    var doMove = {
+        up: function () {
+            y -= speed
+            y < 0 ? y = 0 : y;
+            sendMsg(x, y)
+        },
+        down: function () {
+            y += speed
+            y > height - 50 ? y = height - 50 : y;
+            sendMsg(x, y)
+        }, left: function () {
+            x -= speed;
+            x < 0 ? x = 0 : x;
+            sendMsg(x, y)
+        }, right: function () {
+            x += speed
+            x > width - 50 ? x = width - 50 : x;
+            sendMsg(x, y)
+        }
+    }
+
+
+    function drawRect(x, y) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.strokeStyle = "green";
+        ctx.rect(x, y, 50, 50);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    //    drawRect(x, y)
+
+    //WS
+    var websocket;
+
+    //如果浏览器支持WebSocket
+    if (window.WebSocket) {
+        websocket = new WebSocket("ws://10.26.180.84:21775/ws");  //获得WebSocket对象
+
+        //当有消息过来的时候触发
+        websocket.onmessage = function (event) {
+            var data = JSON.parse(event.data);
+            for (key in data) {
+                console.log(data[key])
+                ctx.clearRect(data[key].x, data[key].y, width, height);
+                ctx.beginPath();
+                ctx.fillStyle = data[key].color;
+                ctx.strokeStyle = data[key].color;
+                ctx.rect(x, y, 50, 50);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.fill();
+            }
+
+
+        }
+
+        //连接关闭的时候触发
+        websocket.onclose = function (event) {
+            console.log('断开连接')
+        }
+
+        //连接打开的时候触发
+        websocket.onopen = function (event) {
+            console.log('建立连接')
+        }
+    } else {
+        alert("浏览器不支持WebSocket");
+    }
+
+    function sendMsg(x, y) { //发送消息
+        var transJson = {
+            id: '',
+            color: '',
+            x: x,
+            y: y,
+            speed: 5
+        }
+        if (window.WebSocket) {
+            if (websocket.readyState == WebSocket.OPEN) { //如果WebSocket是打开状态
+                websocket.send(JSON.stringify(transJson)); //send()发送消息
+            }
+        } else {
+            return;
+        }
+    }
+
+
+</script>
+</body>

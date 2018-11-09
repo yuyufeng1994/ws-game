@@ -20,7 +20,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 添加
         Global.group.add(ctx.channel());
-        Global.gameMap.put(ctx.channel().id().toString(), new TransJson(ctx.channel().id().toString(), "red", 0, 0, 5));
+        Global.gameMap.put(ctx.channel().id().toString(), new TransJson(ctx.channel().id().toString(), Global.getColor(), 0, 0, 5));
         System.out.println("客户端与服务端连接开启：" + ctx.channel().remoteAddress().toString());
     }
 

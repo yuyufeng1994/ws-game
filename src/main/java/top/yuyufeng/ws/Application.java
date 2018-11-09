@@ -44,6 +44,7 @@ public class Application {
         } else {
             port = 21775;
         }
+        new MyTask().start();
         new Application(port).start();
 
     }

@@ -18,7 +18,7 @@
 <body>
 <div>
     <div>
-        <!--<h3>Game游戏</h3>-->
+        <h3>按‘↑’‘↓’‘←’‘→’键移动你的方块</h3>
         <div>
             <canvas id="myCanvas" width="600px" height="600px"></canvas>
         </div>
@@ -105,10 +105,9 @@
             var data = JSON.parse(event.data);
             ctx.clearRect(0, 0, width, height);
             for (key in data) {
-                console.log(data[key])
                 ctx.beginPath();
                 ctx.fillStyle = data[key].color;
-                ctx.strokeStyle = data[key].color;
+//                ctx.strokeStyle = data[key].color;
                 ctx.rect(data[key].x, data[key].y, 50, 50);
                 ctx.stroke();
                 ctx.closePath();
